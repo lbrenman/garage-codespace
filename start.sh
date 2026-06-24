@@ -1,9 +1,23 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+GARAGE_BIN="/usr/local/bin/garage"
+GARAGE_VERSION="v2.3.0"
+GARAGE_ARCH="x86_64"
 GARAGE_TOML="$(pwd)/garage.toml"
 AWSRC="$(pwd)/.awsrc"
 CREDS_FILE="$(pwd)/.garage-credentials"
+
+# ── Ensure garage binary is installed ──────────────────────────────────────
+if [ ! -x "${GARAGE_BIN}" ]; then
+  echo "==> Garage binary not found, installing ${GARAGE_VERSION}..."
+  sudo curl -fsSL \
+    "https://garagehq.deuxfleurs.fr/_releases/${GARAGE_VERSION}/${GARAGE_ARCH}-unknown-linux-musl/garage" \
+    -o "${GARAGE_BIN}"
+  sudo chmod +x "${GARAGE_BIN}"
+  echo "    Installed at ${GARAGE_BIN}"
+fi
+echo "==> Garage binary: $(${GARAGE_BIN} --version)"
 
 # ── Generate garage.toml from template if not already present ──────────────
 if [ ! -f "${GARAGE_TOML}" ]; then
@@ -56,7 +70,7 @@ sleep 1
 echo ""
 echo "==> Starting Garage..."
 GARAGE_CONFIG_FILE="${GARAGE_TOML}" \
-  nohup garage server --single-node --default-bucket \
+  nohup "${GARAGE_BIN}" server --single-node --default-bucket \
   > /tmp/garage.log 2>&1 &
 
 echo "    PID $!"
@@ -66,7 +80,7 @@ echo "    Logs: tail -f /tmp/garage.log"
 echo ""
 echo -n "==> Waiting for Garage to be ready"
 for i in $(seq 1 30); do
-  if GARAGE_CONFIG_FILE="${GARAGE_TOML}" garage status &>/dev/null; then
+  if GARAGE_CONFIG_FILE="${GARAGE_TOML}" "${GARAGE_BIN}" status &>/dev/null; then
     echo " ✓"
     break
   fi
@@ -76,11 +90,11 @@ done
 
 echo ""
 echo "==> Garage status:"
-GARAGE_CONFIG_FILE="${GARAGE_TOML}" garage status
+GARAGE_CONFIG_FILE="${GARAGE_TOML}" "${GARAGE_BIN}" status
 
 echo ""
 echo "==> Bucket list:"
-GARAGE_CONFIG_FILE="${GARAGE_TOML}" garage bucket list
+GARAGE_CONFIG_FILE="${GARAGE_TOML}" "${GARAGE_BIN}" bucket list
 
 echo ""
 echo "============================================================"
