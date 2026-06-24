@@ -2,6 +2,10 @@
 
 A GitHub Codespace for running [Garage](https://garagehq.deuxfleurs.fr/) — a lightweight, S3-compatible object store — as a single-node development environment.
 
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/lbrenman/garage-codespace)
+
+---
+
 ## Ports
 
 | Port | Service |
@@ -63,26 +67,67 @@ source .awsrc && bash demo.sh
 
 ---
 
+## Connecting External Clients (e.g. iPaaS / Amplify Fusion)
+
+> ⚠️ The GitHub Codespaces public port URL (`*.app.github.dev`) cannot be used directly with S3 SDK clients. GitHub's reverse proxy injects cookies and modifies requests, which breaks AWS Signature V4 validation.
+
+Use **ngrok** to expose port 3900 with a clean tunnel instead.
+
+### Install ngrok
+
+```bash
+curl -fsSL https://ngrok-agent.s3.amazonaws.com/ngrok.asc | sudo tee /etc/apt/trusted.gpg.d/ngrok.asc >/dev/null
+echo "deb https://ngrok-agent.s3.amazonaws.com buster main" | sudo tee /etc/apt/sources.list.d/ngrok.list
+sudo apt-get update -q && sudo apt-get install -y ngrok
+```
+
+### Authenticate
+
+Get your authtoken from https://dashboard.ngrok.com/get-started/your-authtoken (free account works):
+
+```bash
+ngrok config add-authtoken YOUR_NGROK_TOKEN
+```
+
+### Start the tunnel
+
+```bash
+ngrok http 3900
+```
+
+ngrok will display a public URL like `https://xxxx-xx-xx-xx-xx.ngrok-free.app`. Use that as the **endpoint URL** in your S3 connector.
+
+### S3 Connector Settings
+
+| Field | Value |
+|-------|-------|
+| URL / Endpoint | `https://xxxx-xx-xx-xx-xx.ngrok-free.app` |
+| Region | `garage` |
+| Access Key | *(from `.garage-credentials`)* |
+| Secret Key | *(from `.garage-credentials`)* |
+| Path Style | `true` (if available) |
+
+> **Note:** The ngrok URL changes each time you restart the tunnel on a free account. Consider a paid ngrok plan or a static domain for persistent demos.
+
+---
+
 ## Garage CLI
 
 The `garage` CLI is available for cluster administration:
 
 ```bash
-export GARAGE_CONFIG_FILE=$(pwd)/garage.toml
-
-# Cluster health
-garage status
+GARAGE_CONFIG_FILE=$(pwd)/garage.toml /usr/local/bin/garage status
 
 # Bucket management
-garage bucket list
-garage bucket create new-bucket
+GARAGE_CONFIG_FILE=$(pwd)/garage.toml /usr/local/bin/garage bucket list
+GARAGE_CONFIG_FILE=$(pwd)/garage.toml /usr/local/bin/garage bucket create new-bucket
 
 # Key management
-garage key list
-garage key create my-key
+GARAGE_CONFIG_FILE=$(pwd)/garage.toml /usr/local/bin/garage key list
+GARAGE_CONFIG_FILE=$(pwd)/garage.toml /usr/local/bin/garage key info --show-secret <key-id>
 
 # Grant key access to a bucket
-garage bucket allow --read --write --owner new-bucket --key my-key
+GARAGE_CONFIG_FILE=$(pwd)/garage.toml /usr/local/bin/garage bucket allow --read --write --owner new-bucket --key <key-id>
 ```
 
 ---
@@ -108,10 +153,8 @@ Full Admin API reference: https://garagehq.deuxfleurs.fr/documentation/reference
 To serve a static site from a bucket:
 
 ```bash
-export GARAGE_CONFIG_FILE=$(pwd)/garage.toml
-
 # Enable website mode on a bucket
-garage bucket website --allow my-bucket
+GARAGE_CONFIG_FILE=$(pwd)/garage.toml /usr/local/bin/garage bucket website --allow my-bucket
 
 # Upload your site
 source .awsrc
@@ -150,3 +193,4 @@ https://garagehq.deuxfleurs.fr/documentation/reference-manual/s3-compatibility/
 - [Quick Start Guide](https://garagehq.deuxfleurs.fr/documentation/quick-start/)
 - [Configuration Reference](https://garagehq.deuxfleurs.fr/documentation/reference-manual/configuration/)
 - [S3 Compatibility](https://garagehq.deuxfleurs.fr/documentation/reference-manual/s3-compatibility/)
+- [ngrok](https://ngrok.com/)

@@ -4,7 +4,7 @@
 
 set -euo pipefail
 
-AWS="${HOME}/.local/bin/aws"
+AWS="/usr/local/bin/aws"
 BUCKET="${GARAGE_DEFAULT_BUCKET:-my-bucket}"
 
 echo "==> Listing buckets..."
