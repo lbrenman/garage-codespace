@@ -1,0 +1,31 @@
+# Garage Admin API examples
+# Requires VS Code REST Client extension
+# Set @adminToken to the value in your .garage-credentials file
+# (or check garage.toml for admin_token)
+
+@baseUrl = http://localhost:3903
+@adminToken = YOUR_ADMIN_TOKEN_HERE
+
+### Health check
+GET {{baseUrl}}/health
+
+### Cluster status
+GET {{baseUrl}}/v2/GetClusterStatus
+Authorization: Bearer {{adminToken}}
+
+### List buckets
+GET {{baseUrl}}/v2/ListBuckets
+Authorization: Bearer {{adminToken}}
+
+### List keys
+GET {{baseUrl}}/v2/ListKeys
+Authorization: Bearer {{adminToken}}
+
+### Garage version info
+GET {{baseUrl}}/version
+Authorization: Bearer {{adminToken}}
+
+### Metrics (Prometheus format)
+# Use metrics_token from garage.toml
+GET {{baseUrl}}/metrics
+Authorization: Bearer YOUR_METRICS_TOKEN_HERE

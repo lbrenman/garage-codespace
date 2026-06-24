@@ -1,0 +1,33 @@
+{
+  "name": "Garage S3 Codespace",
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu-24.04",
+  "features": {
+    "ghcr.io/devcontainers/features/python:1": {
+      "version": "3.11"
+    }
+  },
+  "forwardPorts": [3900, 3902, 3903],
+  "portsAttributes": {
+    "3900": {
+      "label": "Garage S3 API",
+      "onAutoForward": "notify"
+    },
+    "3902": {
+      "label": "Garage Web (static sites)",
+      "onAutoForward": "notify"
+    },
+    "3903": {
+      "label": "Garage Admin API",
+      "onAutoForward": "notify"
+    }
+  },
+  "postCreateCommand": "bash .devcontainer/install.sh",
+  "postStartCommand": "bash start.sh",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "humao.rest-client"
+      ]
+    }
+  }
+}

@@ -1,0 +1,41 @@
+# Garage generated config (contains secrets)
+garage.toml
+
+# Credentials and AWS config helpers
+.garage-credentials
+.awsrc
+~/.awsrc
+
+# Garage runtime data (stored in /tmp, but just in case)
+garage-meta/
+garage-data/
+
+# Logs
+*.log
+/tmp/garage.log
+
+# Python / awscli
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+.venv/
+env/
+venv/
+
+# macOS
+.DS_Store
+
+# VS Code
+.vscode/settings.json
+.vscode/*.code-workspace
+
+# Node (if you add JS tooling later)
+node_modules/
+npm-debug.log*
+
+# Misc
+*.swp
+*.bak
+.env
