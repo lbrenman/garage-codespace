@@ -19,6 +19,14 @@ if [ ! -x "${GARAGE_BIN}" ]; then
 fi
 echo "==> Garage binary: $(${GARAGE_BIN} --version)"
 
+# ── Ensure awscli is installed ──────────────────────────────────────────────
+AWS_BIN="${HOME}/.local/bin/aws"
+if [ ! -x "${AWS_BIN}" ]; then
+  echo "==> awscli not found, installing..."
+  python3 -m pip install --quiet --user "awscli>=2.13.0"
+  echo "    awscli installed: $(${AWS_BIN} --version)"
+fi
+
 # ── Generate garage.toml from template if not already present ──────────────
 if [ ! -f "${GARAGE_TOML}" ]; then
   echo "==> Generating garage.toml..."
@@ -57,6 +65,7 @@ export AWS_DEFAULT_REGION='garage'
 export AWS_ACCESS_KEY_ID='${GARAGE_DEFAULT_ACCESS_KEY}'
 export AWS_SECRET_ACCESS_KEY='${GARAGE_DEFAULT_SECRET_KEY}'
 export PATH="\$HOME/.local/bin:\$PATH"
+alias aws="\$HOME/.local/bin/aws"
 EOF
 
 # ── Create data dirs ────────────────────────────────────────────────────────
