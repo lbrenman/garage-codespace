@@ -4,9 +4,12 @@
   "features": {
     "ghcr.io/devcontainers/features/python:1": {
       "version": "3.11"
+    },
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "20"
     }
   },
-  "forwardPorts": [3900, 3902, 3903],
+  "forwardPorts": [3900, 3902, 3903, 3910],
   "portsAttributes": {
     "3900": {
       "label": "Garage S3 API",
@@ -19,6 +22,10 @@
     "3903": {
       "label": "Garage Admin API",
       "onAutoForward": "notify"
+    },
+    "3910": {
+      "label": "Garage Explorer UI",
+      "onAutoForward": "openBrowser"
     }
   },
   "postCreateCommand": "bash .devcontainer/install.sh",

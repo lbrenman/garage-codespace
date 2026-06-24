@@ -67,6 +67,22 @@ source .awsrc && bash demo.sh
 
 ---
 
+## Garage Explorer (Web UI)
+
+A built-in web UI for browsing buckets, uploading/downloading files, and managing objects is available on port `3910`. It starts automatically with `start.sh`.
+
+Open it via the **Ports** tab in VS Code (port 3910) or navigate to `http://localhost:3910` in the Codespace browser.
+
+**Features:**
+- View all buckets
+- Create and delete buckets
+- Browse objects and folders
+- Upload files (drag & drop or click)
+- Download files
+- Delete objects
+
+---
+
 ## Connecting External Clients (e.g. iPaaS / Amplify Fusion)
 
 > ⚠️ The GitHub Codespaces public port URL (`*.app.github.dev`) cannot be used directly with S3 SDK clients. GitHub's reverse proxy injects cookies and modifies requests, which breaks AWS Signature V4 validation.

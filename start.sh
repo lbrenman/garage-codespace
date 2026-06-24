@@ -106,13 +106,30 @@ echo ""
 echo "==> Bucket list:"
 GARAGE_CONFIG_FILE="${GARAGE_TOML}" "${GARAGE_BIN}" bucket list
 
+# ── Start Garage Explorer web UI ─────────────────────────────────────────────
+echo ""
+echo "==> Starting Garage Explorer UI..."
+pkill -f "node explorer/server.js" 2>/dev/null || true
+if [ ! -d "explorer/node_modules" ]; then
+  echo "    Installing explorer dependencies..."
+  (cd explorer && npm install --silent)
+fi
+AWS_ENDPOINT_URL="http://localhost:3900" \
+AWS_DEFAULT_REGION="garage" \
+AWS_ACCESS_KEY_ID="${GARAGE_DEFAULT_ACCESS_KEY}" \
+AWS_SECRET_ACCESS_KEY="${GARAGE_DEFAULT_SECRET_KEY}" \
+EXPLORER_PORT=3910 \
+  nohup node explorer/server.js > /tmp/explorer.log 2>&1 &
+echo "    Explorer PID $! — http://localhost:3910"
+
 echo ""
 echo "============================================================"
 echo "  Garage is running!"
 echo ""
-echo "  S3 API  : http://localhost:3900"
-echo "  Web     : http://localhost:3902"
-echo "  Admin   : http://localhost:3903"
+echo "  S3 API    : http://localhost:3900"
+echo "  Web       : http://localhost:3902"
+echo "  Admin API : http://localhost:3903"
+echo "  Explorer  : http://localhost:3910"
 echo ""
 echo "  Bucket  : ${GARAGE_DEFAULT_BUCKET}"
 echo "  Key ID  : ${GARAGE_DEFAULT_ACCESS_KEY}"
