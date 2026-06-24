@@ -19,11 +19,14 @@ if [ ! -x "${GARAGE_BIN}" ]; then
 fi
 echo "==> Garage binary: $(${GARAGE_BIN} --version)"
 
-# ── Ensure awscli is installed ──────────────────────────────────────────────
-AWS_BIN="${HOME}/.local/bin/aws"
+# ── Ensure awscli v2 is installed ──────────────────────────────────────────
+AWS_BIN="/usr/local/bin/aws"
 if [ ! -x "${AWS_BIN}" ]; then
-  echo "==> awscli not found, installing..."
-  python3 -m pip install --quiet --user "awscli>=2.13.0"
+  echo "==> awscli v2 not found, installing..."
+  curl -fsSL "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o /tmp/awscliv2.zip
+  unzip -q /tmp/awscliv2.zip -d /tmp/awscliv2
+  sudo /tmp/awscliv2/aws/install --bin-dir /usr/local/bin --install-dir /usr/local/aws-cli
+  rm -rf /tmp/awscliv2 /tmp/awscliv2.zip
   echo "    awscli installed: $(${AWS_BIN} --version)"
 fi
 
@@ -64,8 +67,6 @@ export AWS_ENDPOINT_URL='http://localhost:3900'
 export AWS_DEFAULT_REGION='garage'
 export AWS_ACCESS_KEY_ID='${GARAGE_DEFAULT_ACCESS_KEY}'
 export AWS_SECRET_ACCESS_KEY='${GARAGE_DEFAULT_SECRET_KEY}'
-export PATH="\$HOME/.local/bin:\$PATH"
-alias aws="\$HOME/.local/bin/aws"
 EOF
 
 # ── Create data dirs ────────────────────────────────────────────────────────
